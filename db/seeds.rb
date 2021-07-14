@@ -8,3 +8,18 @@ User.create!([
                  email: 'vader@thedarkside.com'
                }
              ])
+
+Character.create!([
+                    {
+                      name: 'Ryu Nightbreeze',
+                      level: 10,
+                      character_class: 'Fighter',
+                      race: 'Half Orc'
+                    },
+                    {
+                      name: 'Camus Moongem',
+                      level: 10,
+                      character_class: 'Wizard',
+                      race: 'Gnome'
+                    }
+                  ])
