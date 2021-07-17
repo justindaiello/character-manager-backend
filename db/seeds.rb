@@ -13,25 +13,25 @@ Character.create!([
                     {
                       name: 'Ryu Nightbreeze',
                       level: 10,
-                      character_class: 'Fighter',
-                      race: 'Half Orc'
+                      character_class: 'fighter',
+                      race: 'half_orc'
                     },
                     {
                       name: 'Camus Moongem',
                       level: 10,
-                      character_class: 'Wizard',
-                      race: 'Gnome'
+                      character_class: 'wizard',
+                      race: 'gnome'
                     },
                     {
                       name: 'Dalton Rhode',
                       level: 10,
-                      character_class: 'Warlock',
-                      race: 'Human'
+                      character_class: 'warlock',
+                      race: 'human'
                     },
                     {
                       name: 'Darkwing Copperkettle',
                       level: 10,
-                      character_class: 'Sorcerer',
-                      race: 'Dragonborn'
+                      character_class: 'sorcerer',
+                      race: 'dragonborn'
                     }
                   ])
