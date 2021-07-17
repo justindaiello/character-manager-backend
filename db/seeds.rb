@@ -21,5 +21,17 @@ Character.create!([
                       level: 10,
                       character_class: 'Wizard',
                       race: 'Gnome'
+                    },
+                    {
+                      name: 'Dalton Rhode',
+                      level: 10,
+                      character_class: 'Warlock',
+                      race: 'Human'
+                    },
+                    {
+                      name: 'Darkwing Copperkettle',
+                      level: 10,
+                      character_class: 'Sorcerer',
+                      race: 'Dragonborn'
                     }
                   ])
