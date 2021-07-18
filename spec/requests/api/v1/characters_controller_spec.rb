@@ -31,13 +31,7 @@ RSpec.describe Api::V1::CharactersController, type: :request do
   end
 
   describe 'creating a character' do
-    let(:user) do
-      User.create(
-        name: 'Camus Moongem',
-        email: 'camus@books.com',
-        password: 'iheartb00ks'
-      )
-    end
+    let(:user) { create(:user) }
     let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
 
     context 'when there is no token or an invalid token' do

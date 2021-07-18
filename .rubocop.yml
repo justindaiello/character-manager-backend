@@ -9,3 +9,6 @@ Style/ClassAndModuleChildren:
 
 Metrics/BlockLength:
   Enabled: false
+
+Lint/NonDeterministicRequireOrder:
+  Enabled: false

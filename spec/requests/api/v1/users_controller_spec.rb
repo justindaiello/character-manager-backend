@@ -1,22 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::UsersController, type: :request do
-  let(:test_user) do
-    User.create(
-      name: 'Dalton Rhode',
-      email: 'dalton@patron.com',
-      password: 'b00tdagger'
-    )
-  end
+  let(:test_user) { create(:user) }
   let(:token) { JWT.encode({ user_id: test_user.id }, ENV['APP_SECRET']) }
 
   describe 'fetching all users' do
     before do
-      User.create(
-        name: 'Camus Moongem',
-        email: 'camus@books.com',
-        password: 'iheartb00ks'
-      )
+      create(:user)
     end
 
     context 'when the user is not authenticated' do
@@ -24,22 +14,18 @@ RSpec.describe Api::V1::UsersController, type: :request do
         get api_v1_users_path
 
         expect(response).to have_http_status(401)
+        expect(JSON.parse(response.body)['message']).to eq('Please log in')
       end
     end
 
     context 'when the user is autenticated' do
       let(:headers) { { 'Authorization': "Bearer #{token}" } }
 
-      before do
-        get api_v1_users_path, headers: headers
-      end
-
-      it 'returns a 200 on success' do
-        expect(response).to have_http_status(200)
-      end
-
       it 'responds with JSON' do
-        expect(JSON.parse(response.body)).to include(hash_including('name' => 'Camus Moongem'))
+        get api_v1_users_path, headers: headers
+
+        expect(response).to have_http_status(200)
+        expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
   end
