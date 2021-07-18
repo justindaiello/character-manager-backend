@@ -1,24 +1,31 @@
 module Api::V1
   class UsersController < ApplicationController
+    before_action :require_login, only: %i[index show]
+
     def index
       @users = User.all
       render json: @users
     end
 
     def create
-      @user = User.new(user_params)
+      @user = User.create(user_params)
 
-      if @jobs.save
-        render json: @users, status: created
+      if @user.save
+        token = encode_token({ user_id: @user.id })
+        render json: { user: @user, token: token }, status: :created
       else
-        render json: @users.errors, status: :unprocessable_entity
+        render json: @user.errors.full_messages, status: :unprocessable_entity
       end
+    end
+
+    def show
+      render json: @user, except: [:password_digest]
     end
 
     private
 
     def user_params
-      params.requre(:user).permit(:name, :email)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
   end
 end
