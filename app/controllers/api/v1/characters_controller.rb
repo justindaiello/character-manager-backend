@@ -1,5 +1,7 @@
 module Api::V1
   class CharactersController < ApplicationController
+    before_action :require_login, only: [:create]
+
     def index
       @characters = Character.all
       render json: @characters

@@ -1,11 +1,13 @@
 User.create!([
                {
                  name: 'Luke Skywalker',
-                 email: 'luke@theforce.com'
+                 email: 'luke@theforce.com',
+                 password: 'test1234'
                },
                {
                  name: 'Darth Vader',
-                 email: 'vader@thedarkside.com'
+                 email: 'vader@thedarkside.com',
+                 password: 'test1234'
                }
              ])
 
