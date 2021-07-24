@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::UsersController, type: :request do
   let(:test_user) { create(:user) }
   let(:token) { JWT.encode({ user_id: test_user.id }, ENV['APP_SECRET']) }
+  let(:headers) { { 'Authorization': "Bearer #{token}" } }
 
   describe 'fetching all users' do
     before do
@@ -19,8 +20,6 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
 
     context 'when the user is autenticated' do
-      let(:headers) { { 'Authorization': "Bearer #{token}" } }
-
       it 'responds with JSON' do
         get api_v1_users_path, headers: headers
 
@@ -75,10 +74,6 @@ RSpec.describe Api::V1::UsersController, type: :request do
     end
 
     context 'when the user is logged in' do
-      let(:user) { create(:user) }
-      let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
-      let(:headers) { { 'Authorization': "Bearer #{token}" } }
-
       it 'returns the user\'s info' do
         get api_v1_users_me_path, headers: headers
 
