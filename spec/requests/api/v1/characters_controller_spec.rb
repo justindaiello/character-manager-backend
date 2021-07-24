@@ -41,6 +41,7 @@ RSpec.describe Api::V1::CharactersController, type: :request do
         post api_v1_characters_path, params: character_params
 
         expect(response).to have_http_status(401)
+        expect(JSON.parse(response.body)['message']).to eq('Please log in')
       end
     end
 
@@ -71,33 +72,25 @@ RSpec.describe Api::V1::CharactersController, type: :request do
 
   describe 'updating a character' do
     let(:new_character) { create(:character) }
-    let(:character_params) do
-      {
-        character: {
-          name: 'Camus Moongem',
-          level: 10,
-          race: 'gnome',
-          character_class: 'hi'
-        }
-      }
-    end
+    let(:new_character_params) { { id: new_character.id, name: 'Burt Reynolds' } }
 
     context 'when there is no token or an invalid token' do
       it 'throws a 401' do
-        new_character.character_class = 'warlock'
-        patch "/api/v1/characters/#{new_character.id}", params: { character: new_character }
+        patch "/api/v1/characters/#{new_character.id}", params: { character: new_character_params }
 
         expect(response).to have_http_status(401)
+        expect(JSON.parse(response.body)['message']).to eq('Please log in')
       end
     end
 
     context 'when the params are valid' do
       it 'updates the character' do
         patch "/api/v1/characters/#{new_character.id}", params: {
-          character: { id: new_character.id, name: 'Burt Reynolds' }
+          character: new_character_params
         }, headers: headers
 
         expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)['name']).to eq(new_character_params[:name])
       end
     end
   end
