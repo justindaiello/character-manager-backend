@@ -5,7 +5,7 @@ module Api::V1
 
       if user && user&.authenticate(params[:password])
         token = encode_token({ user_id: user.id })
-        render json: { user: user, token: token }, status: :created
+        render json: { user: user, token: token }, except: [:password_digest], status: :created
       else
         render json: { message: 'Invalid username or password' }, status: :unauthorized
       end
