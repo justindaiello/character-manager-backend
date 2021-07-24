@@ -1,6 +1,6 @@
 module Api::V1
   class CharactersController < ApplicationController
-    before_action :require_login, only: [:create]
+    before_action :require_login, only: %i[create update]
 
     def index
       @characters = Character.all
@@ -17,12 +17,20 @@ module Api::V1
       end
     end
 
+    def update
+      @character = Character.find(params[:id])
+
+      if @character.update(character_params)
+        render json: @character, status: :ok
+      else
+        render json: @character.errors, status: :unprocessable_entity
+      end
+    end
+
     private
 
     def character_params
-      params.require(:character).permit(
-        :name, :level, :character_class, :race
-      )
+      params.require(:character).permit(:name, :level, :character_class, :race)
     end
   end
 end

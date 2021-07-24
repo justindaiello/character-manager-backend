@@ -11,6 +11,9 @@ RSpec.describe Api::V1::CharactersController, type: :request do
       }
     }
   end
+  let(:user) { create(:user) }
+  let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
+  let(:headers) { { 'Authorization': "Bearer #{token}" } }
 
   describe 'fetching all characters' do
     let(:character_class_type) { 'wizard' }
@@ -31,9 +34,6 @@ RSpec.describe Api::V1::CharactersController, type: :request do
   end
 
   describe 'creating a character' do
-    let(:user) { create(:user) }
-    let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
-
     context 'when there is no token or an invalid token' do
       let(:character_class_type) { 'wizard' }
 
@@ -45,8 +45,6 @@ RSpec.describe Api::V1::CharactersController, type: :request do
     end
 
     context 'when there is a valid token' do
-      let(:headers) { { 'Authorization': "Bearer #{token}" } }
-
       context 'when there is an invalid parameter' do
         let(:character_class_type) { 'Sloth' }
 
@@ -67,6 +65,39 @@ RSpec.describe Api::V1::CharactersController, type: :request do
           expect(response).to have_http_status(201)
           expect(JSON.parse(response.body)['character_class']).to eq('wizard')
         end
+      end
+    end
+  end
+
+  describe 'updating a character' do
+    let(:new_character) { create(:character) }
+    let(:character_params) do
+      {
+        character: {
+          name: 'Camus Moongem',
+          level: 10,
+          race: 'gnome',
+          character_class: 'hi'
+        }
+      }
+    end
+
+    context 'when there is no token or an invalid token' do
+      it 'throws a 401' do
+        new_character.character_class = 'warlock'
+        patch "/api/v1/characters/#{new_character.id}", params: { character: new_character }
+
+        expect(response).to have_http_status(401)
+      end
+    end
+
+    context 'when the params are valid' do
+      it 'updates the character' do
+        patch "/api/v1/characters/#{new_character.id}", params: {
+          character: { id: new_character.id, name: 'Burt Reynolds' }
+        }, headers: headers
+
+        expect(response).to have_http_status(200)
       end
     end
   end
