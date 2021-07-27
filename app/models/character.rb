@@ -1,4 +1,8 @@
 class Character < ApplicationRecord
+  has_one :ability, dependent: :destroy
+
+  accepts_nested_attributes_for :ability
+
   CHARACTER_CLASS_TYPES = %w[
     barbarian
     bard

@@ -4,14 +4,14 @@ module Api::V1
 
     def index
       @characters = Character.all
-      render json: @characters
+      render json: @characters, include: :ability
     end
 
     def create
       @character = Character.new(character_params)
 
       if @character.save
-        render json: @character, status: :created
+        render json: @character, include: :ability, status: :created
       else
         render json: @character.errors, status: :unprocessable_entity
       end
@@ -27,10 +27,28 @@ module Api::V1
       end
     end
 
+    def show
+      @character = Character.includes(:ability).find(params[:id])
+
+      render json: @character, include: :ability
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Character with id: #{params[:id]} does not exist" }, status: :not_found
+    end
+
     private
 
     def character_params
-      params.require(:character).permit(:name, :level, :character_class, :race)
+      params.require(:character).permit(
+        :name, :level, :character_class, :race,
+        ability_attributes: %i[
+          strength
+          charisma
+          wisdom
+          constitution
+          intelligence
+          dexterity
+        ]
+      )
     end
   end
 end

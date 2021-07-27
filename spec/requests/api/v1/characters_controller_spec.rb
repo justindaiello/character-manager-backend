@@ -14,6 +14,8 @@ RSpec.describe Api::V1::CharactersController, type: :request do
   let(:user) { create(:user) }
   let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
   let(:headers) { { 'Authorization': "Bearer #{token}" } }
+  let(:character) { create(:character, ability: ability) }
+  let(:ability) { create(:ability) }
 
   describe 'fetching all characters' do
     let(:character_class_type) { 'wizard' }
@@ -30,6 +32,26 @@ RSpec.describe Api::V1::CharactersController, type: :request do
     it 'returns characters' do
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)[0]['name']).to eq('Camus Moongem')
+    end
+  end
+
+  describe 'showing a single character' do
+    context 'when there is no valid character' do
+      it 'throws a 401' do
+        get '/api/v1/characters/123456'
+
+        expect(response).to have_http_status(404)
+        expect(JSON.parse(response.body)['error']).to eq('Character with id: 123456 does not exist')
+      end
+    end
+
+    context 'when the character exists' do
+      it 'reponds with the character info' do
+        get "/api/v1/characters/#{character.id}"
+
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)['ability']).not_to be_nil
+      end
     end
   end
 
@@ -64,7 +86,36 @@ RSpec.describe Api::V1::CharactersController, type: :request do
           post api_v1_characters_path, params: character_params, headers: headers
 
           expect(response).to have_http_status(201)
+          expect(JSON.parse(response.body)['ability']).to be_nil
           expect(JSON.parse(response.body)['character_class']).to eq('wizard')
+        end
+      end
+
+      context 'when there are nested attributes' do
+        let(:nested_character_params) do
+          {
+            character: {
+              name: 'Camus Moongem',
+              level: 10,
+              race: 'gnome',
+              character_class: 'warlock',
+              ability_attributes: {
+                strength: rand(1..18),
+                dexterity: rand(1..18),
+                constitution: rand(1..18),
+                intelligence: rand(1..18),
+                wisdom: rand(1..18),
+                charisma: rand(1..18)
+              }
+            }
+          }
+        end
+
+        it 'creates a character with abilities' do
+          post api_v1_characters_path, params: nested_character_params, headers: headers
+
+          expect(response).to have_http_status(201)
+          expect(JSON.parse(response.body)['ability']).not_to be_nil
         end
       end
     end
