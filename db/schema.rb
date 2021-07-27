@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_17_230809) do
+ActiveRecord::Schema.define(version: 2021_07_24_234158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "abilities", force: :cascade do |t|
+    t.integer "strength", null: false
+    t.integer "dexterity", null: false
+    t.integer "constitution", null: false
+    t.integer "intelligence", null: false
+    t.integer "wisdom", null: false
+    t.integer "charisma", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "character_id"
+    t.index ["character_id"], name: "index_abilities_on_character_id"
+  end
 
   create_table "characters", force: :cascade do |t|
     t.string "name"

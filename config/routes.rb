@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       post '/login', to: 'authentications#create'
 
       get '/characters', to: 'characters#index'
+      get 'characters/:id', to: 'characters#show'
       post '/characters', to: 'characters#create'
       patch '/characters/:id', to: 'characters#update'
     end
