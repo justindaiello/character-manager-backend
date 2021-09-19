@@ -134,6 +134,20 @@ RSpec.describe Api::V1::CharactersController, type: :request do
       end
     end
 
+    context 'when the character does not belong to the user' do
+      let(:wrong_user) { create(:user) }
+      let(:token) { JWT.encode({ user_id: wrong_user.id }, ENV['APP_SECRET']) }
+
+      it 'throws a 401' do
+        patch "/api/v1/characters/#{new_character.id}", params: {
+          character: new_character_params
+        }, headers: headers
+
+        expect(response).to have_http_status(401)
+        expect(response.body).to eq('You do not have permission to update this Character')
+      end
+    end
+
     context 'when the params are valid' do
       it 'updates the character' do
         patch "/api/v1/characters/#{new_character.id}", params: {

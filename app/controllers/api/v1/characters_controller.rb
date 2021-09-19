@@ -1,6 +1,7 @@
 module Api::V1
   class CharactersController < ApplicationController
     before_action :require_login, only: %i[create update destroy]
+    before_action :require_permission, only: %i[update destroy]
 
     def index
       @characters = Character.all
@@ -18,7 +19,7 @@ module Api::V1
     end
 
     def update
-      @character = Character.find(params[:id])
+      @character = current_character
 
       if @character.update(character_params)
         render json: @character, status: :ok
@@ -57,6 +58,20 @@ module Api::V1
                 dexterity
               ]
             )
+    end
+
+    def require_permission
+      return unless character_belongs_to_user
+
+      render json: 'You do not have permission to update this Character', status: :unauthorized
+    end
+
+    def current_character
+      Character.find(params[:id])
+    end
+
+    def character_belongs_to_user
+      @user.id != current_character.user.id
     end
   end
 end
