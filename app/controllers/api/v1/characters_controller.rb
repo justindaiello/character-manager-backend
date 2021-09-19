@@ -8,7 +8,7 @@ module Api::V1
     end
 
     def create
-      @character = Character.new(character_params)
+      @character = @user.characters.new(character_params)
 
       if @character.save
         render json: @character, include: :ability, status: :created
@@ -45,17 +45,18 @@ module Api::V1
     private
 
     def character_params
-      params.require(:character).permit(
-        :name, :level, :character_class, :race,
-        ability_attributes: %i[
-          strength
-          charisma
-          wisdom
-          constitution
-          intelligence
-          dexterity
-        ]
-      )
+      params.require(:character)
+            .permit(
+              :name, :level, :character_class, :race,
+              ability_attributes: %i[
+                strength
+                charisma
+                wisdom
+                constitution
+                intelligence
+                dexterity
+              ]
+            )
     end
   end
 end

@@ -14,14 +14,14 @@ RSpec.describe Api::V1::CharactersController, type: :request do
   let(:user) { create(:user) }
   let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
   let(:headers) { { 'Authorization': "Bearer #{token}" } }
-  let(:character) { create(:character, ability: ability) }
+  let(:character) { create(:character, user: user, ability: ability) }
   let(:ability) { create(:ability) }
 
   describe 'fetching all characters' do
     let(:character_class_type) { 'wizard' }
 
     before do
-      @character = Character.create(character_params[:character])
+      @character = Character.create(character_params[:character].merge(user: user))
       get api_v1_characters_path
     end
 
@@ -122,7 +122,7 @@ RSpec.describe Api::V1::CharactersController, type: :request do
   end
 
   describe 'updating a character' do
-    let(:new_character) { create(:character) }
+    let(:new_character) { create(:character, user: user) }
     let(:new_character_params) { { id: new_character.id, name: 'Burt Reynolds' } }
 
     context 'when there is no token or an invalid token' do

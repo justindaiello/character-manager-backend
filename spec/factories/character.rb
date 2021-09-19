@@ -31,5 +31,6 @@ FactoryBot.define do
     level { Faker::Number.number(digits: 2) }
     race { RACE_TYPES.sample }
     character_class { CHARACTER_CLASS_TYPES.sample }
+    user
   end
 end

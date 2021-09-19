@@ -1,6 +1,8 @@
 class Character < ApplicationRecord
   has_one :ability, dependent: :destroy
 
+  belongs_to :user
+
   accepts_nested_attributes_for :ability
 
   CHARACTER_CLASS_TYPES = %w[
