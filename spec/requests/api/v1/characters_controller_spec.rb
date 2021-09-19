@@ -145,4 +145,24 @@ RSpec.describe Api::V1::CharactersController, type: :request do
       end
     end
   end
+
+  describe 'deleting a character' do
+    context 'when there is an invalid token' do
+      it 'throws a 401' do
+        delete "/api/v1/characters/#{character.id}"
+
+        expect(response).to have_http_status(401)
+        expect(JSON.parse(response.body)['message']).to eq('Please log in')
+      end
+    end
+
+    context 'when there is a valid token' do
+      it 'deletes the character' do
+        delete "/api/v1/characters/#{character.id}", headers: headers
+
+        expect(response).to have_http_status(200)
+        expect(response.body).to eq("#{character.name} has been deleted.")
+      end
+    end
+  end
 end

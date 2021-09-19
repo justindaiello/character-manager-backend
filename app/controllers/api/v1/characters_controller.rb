@@ -1,6 +1,6 @@
 module Api::V1
   class CharactersController < ApplicationController
-    before_action :require_login, only: %i[create update]
+    before_action :require_login, only: %i[create update destroy]
 
     def index
       @characters = Character.all
@@ -33,6 +33,13 @@ module Api::V1
       render json: @character, include: :ability
     rescue ActiveRecord::RecordNotFound
       render json: { error: "Character with id: #{params[:id]} does not exist" }, status: :not_found
+    end
+
+    def destroy
+      @character = Character.find(params[:id])
+      @character.destroy
+
+      render json: "#{@character.name} has been deleted.", status: :ok
     end
 
     private
