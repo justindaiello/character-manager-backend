@@ -61,7 +61,7 @@ module Api::V1
     end
 
     def require_permission
-      return unless character_belongs_to_user
+      return if character_belongs_to_user
 
       render json: 'You do not have permission to update this Character', status: :unauthorized
     end
@@ -71,7 +71,7 @@ module Api::V1
     end
 
     def character_belongs_to_user
-      @user.id != current_character.user.id
+      @user.id == current_character.user.id
     end
   end
 end
