@@ -63,7 +63,7 @@ module Api::V1
     def require_permission
       return if character_belongs_to_user
 
-      render json: 'You do not have permission to update this Character', status: :unauthorized
+      render json: { message: 'You do not have permission to update this Character' }, status: :unauthorized
     end
 
     def current_character

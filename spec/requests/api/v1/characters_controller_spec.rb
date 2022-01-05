@@ -12,9 +12,11 @@ RSpec.describe Api::V1::CharactersController, type: :request do
     }
   end
   let(:user) { create(:user) }
+  let(:user2) { create(:user) }
   let(:token) { JWT.encode({ user_id: user.id }, ENV['APP_SECRET']) }
   let(:headers) { { 'Authorization': "Bearer #{token}" } }
   let(:character) { create(:character, user: user, ability: ability) }
+  let(:character2) { create(:character, user: user2, ability: ability) }
   let(:ability) { create(:ability) }
 
   describe 'fetching all characters' do
@@ -144,7 +146,7 @@ RSpec.describe Api::V1::CharactersController, type: :request do
         }, headers: headers
 
         expect(response).to have_http_status(401)
-        expect(response.body).to eq('You do not have permission to update this Character')
+        expect(JSON.parse(response.body)['message']).to eq('You do not have permission to update this Character')
       end
     end
 
@@ -167,6 +169,15 @@ RSpec.describe Api::V1::CharactersController, type: :request do
 
         expect(response).to have_http_status(401)
         expect(JSON.parse(response.body)['message']).to eq('Please log in')
+      end
+    end
+
+    context 'when the character does not belong to the user' do
+      it 'throws a 401' do
+        delete "/api/v1/characters/#{character2.id}", headers: headers
+
+        expect(response).to have_http_status(401)
+        expect(JSON.parse(response.body)['message']).to eq('You do not have permission to update this Character')
       end
     end
 
